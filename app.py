@@ -15,7 +15,7 @@ async def start():
 @app.route("/get")
 async def getRender():
     id = request.args.get("username") or abort(400)
-    video_list = requests.get("https://recoverplays.tv/GetUserInfo.php?username=Natopotato&sort=date").json()
+    video_list = requests.get(f"https://recoverplays.tv/GetUserInfo.php?username={id}&sort=date").json()
     video_ids = []
     for video in video_list[1]:
         #rawdll = requests.get(f"https://web.archive.org/web/20191210043532/https://plays.tv/video/{id}").text
