@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{len(ids)}} results for user</title>
+  </head>
+
+  <body>
+    <NOSCRIPT>
+      This site requires JavaScript to retrieve download links
+    </NOSCRIPT>
+    <ul>
+      {% for video_id in ids %}
+        <li class="suslol" id="{{video_id['id']}}">
+          <a href="https://web.archive.org/web/2/https://plays.tv/video/{{video_id['id']}}">{{video_id['title']}}</a>
+          <span id="span-{{video_id['id']}}">, getting download link... <img src="/static/liag2.gif" width="20" height="20"/></span>
+        </li>
+      {% endfor %}
+    </ul>
+<script>
+function getJDDownloadLink(identifier) {
+    fetch(`/get/${identifier}`)
+      .then((response) => {
+          if (!response.ok) {
+              throw new Error("HTTP error!");
+          }
+        return response.json();
+      })
+      .then((response) => {
+          if (!response.isOk) {
+              throw new Error("Non-OK response from server!");
+          }
+          let elm = document.getElementById("span-" + identifier);
+          elm.innerHTML = ", download link: ";
+          let elm1 = document.createElement("a");
+          elm1.innerHTML = "available"
+          elm1.href = `https://web.archive.org/web/2/${response.lien}`;
+          elm.appendChild(elm1);
+      })
+      .catch((err) => {
+        console.error(err);
+        document.getElementById(`span-${identifier}`).innerHTML = "- an error occured (in promise) getting the download link. try again?";
+      });
+}
+let stuff = document.getElementsByClassName("suslol");
+Array.from(stuff).forEach((item) => {
+  try {
+    getJDDownloadLink(item.id);
+  }
+  catch(e) {
+    console.error(e);
+    let elm2 = document.getElementById(`span-${item.id}`);
+    if (!elm2) {}
+    else {
+      elm2.innerHTML = "- an error occured getting the download link. try again?";
+    }
+  }
+});
+</script>
+    </body>
+</html>
